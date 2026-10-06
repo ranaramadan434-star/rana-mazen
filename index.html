@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rana & Mazen ♡ Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#fff7fa;color:#333}
+.wrap{max-width:700px;margin:auto;padding:25px 18px 50px}
+h1{text-align:center;color:#b84d72}
+h2{color:#b84d72;font-size:20px}
+.box{background:white;padding:18px;border-radius:15px;margin:15px 0;box-shadow:0 3px 15px #0000000d}
+label{display:block;margin:14px 0 6px;font-weight:bold}
+input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:15px}
+textarea{min-height:110px}
+button{border:0;border-radius:10px;padding:12px 18px;font-size:15px;margin-top:10px;cursor:pointer}
+.main{width:100%;background:#b84d72;color:white;font-weight:bold}
+.add{background:#f3d3df;color:#8d3657}
+.remove{background:#eee;color:#666}
+.item{background:#fff7fa;padding:12px;border-radius:12px;margin:10px 0}
+#admin{display:none}
+#status,#loginStatus{text-align:center;margin:12px 0;font-weight:bold}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div id="login">
+<h1>Rana & Mazen ♡</h1>
+
+<div class="box">
+<h2>Admin Login</h2>
+
+<label>Email</label>
+<input id="email" type="email">
+
+<label>Password</label>
+<input id="password" type="password">
+
+<button class="main" id="loginBtn">Login</button>
+
+<div id="loginStatus"></div>
+</div>
+</div>
+
+
+<div id="admin">
+
+<h1>Rana & Mazen ♡</h1>
+
+<div class="box">
+<h2>Basic Information</h2>
+
+<label>Names</label>
+<input id="name">
+
+<label>Date</label>
+<input id="event_date">
+
+<label>Story</label>
+<textarea id="story"></textarea>
+
+<label>Song URL</label>
+<input id="music">
+</div>
+
+
+<div class="box">
+<h2>Photos</h2>
+<div id="photos"></div>
+<button class="add" id="addPhoto">+ Add photo</button>
+</div>
+
+
+<div class="box">
+<h2>Videos</h2>
+<div id="videos"></div>
+<button class="add" id="addVideo">+ Add video</button>
+</div>
+
+
+<div class="box">
+<h2>Memories</h2>
+<div id="memories"></div>
+<button class="add" id="addMemory">+ Add memory</button>
+</div>
+
+
+<button class="main" id="saveBtn">
+Save Changes ♡
+</button>
+
+<div id="status"></div>
+
+<button id="logoutBtn" style="width:100%;background:#eee;color:#555">
+Logout
+</button>
+
+</div>
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://jqpceabdshvboderrbiz.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_lgtWi40tBxTt1zPogOQ4oA_Zf8SKU2P";
+
+const db =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+let rowId = null;
+
+
+/* LOGIN */
+
+document.getElementById("loginBtn").onclick = async function(){
+
+const email =
+document.getElementById("email").value.trim();
+
+const password =
+document.getElementById("password").value;
+
+const status =
+document.getElementById("loginStatus");
+
+status.textContent="Logging in...";
+
+const {error} =
+await db.auth.signInWithPassword({
+email:email,
+password:password
+});
+
+if(error){
+status.textContent="Login failed: "+error.message;
+return;
+}
+
+document.getElementById("login").style.display="none";
+document.getElementById("admin").style.display="block";
+
+await loadData();
+
+};
+
+
+/* LOAD */
+
+async function loadData(){
+
+const status =
+document.getElementById("status");
+
+status.textContent="Loading...";
+
+try{
+
+const response =
+await fetch(
+SUPABASE_URL+
+"/rest/v1/rana_mazen?select=*",
+{
+method:"GET",
+headers:{
+"apikey":SUPABASE_KEY,
+"Accept":"application/json"
+}
+}
+);
+
+const data =
+await response.json();
+
+console.log("SUPABASE DATA:",data);
+
+if(!response.ok){
+throw new Error(
+data.message ||
+data.error_description ||
+"Request failed"
+);
+}
+
+if(!Array.isArray(data) || data.length===0){
+
+status.textContent="No data found";
+
+return;
+}
+
+
+/* FIRST ROW */
+
+const item=data[0];
+
+rowId=item.Id;
+
+
+/* BASIC */
+
+document.getElementById("name").value=
+item.Name || "";
+
+document.getElementById("event_date").value=
+item.Event_date || "";
+
+document.getElementById("story").value=
+item.Story || "";
+
+document.getElementById("music").value=
+item.Music || "";
+
+
+/* PHOTOS */
+
+document.getElementById("photos").innerHTML="";
+
+const photos=
+Array.isArray(item.Photos)
+?item.Photos
+:[];
+
+photos.forEach(function(url){
+addPhoto(url);
+});
+
+
+/* VIDEOS */
+
+document.getElementById("videos").innerHTML="";
+
+const videos=
+Array.isArray(item.Videos)
+?item.Videos
+:[];
+
+videos.forEach(function(url){
+addVideo(url);
+});
+
+
+/* MEMORIES */
+
+document.getElementById("memories").innerHTML="";
+
+const memories=
+Array.isArray(item.Memories)
+?item.Memories
+:[];
+
+memories.forEach(function(memory){
+
+if(typeof memory==="string"){
+addMemory(memory,"");
+}else{
+addMemory(
+memory.text || "",
+memory.date || ""
+);
+}
+
+});
+
+
+status.textContent="";
+
+}catch(error){
+
+console.error(error);
+
+status.textContent=
+"Error: "+error.message;
+
+}
+
+}
+
+
+/* PHOTO */
+
+function addPhoto(value=""){
+
+const box=document.createElement("div");
+
+box.className="item";
+
+box.innerHTML=`
+<input class="photoInput"
+type="url"
+placeholder="Photo URL">
+
+<button class="remove">
+Remove
+</button>
+`;
+
+box.querySelector("input").value=value;
+
+box.querySelector("button").onclick=function(){
+box.remove();
+};
+
+document.getElementById("photos").appendChild(box);
+
+}
+
+document.getElementById("addPhoto").onclick=function(){
+addPhoto("");
+};
+
+
+/* VIDEO */
+
+function addVideo(value=""){
+
+const box=document.createElement("div");
+
+box.className="item";
+
+box.innerHTML=`
+<input class="videoInput"
+type="url"
+placeholder="Video URL">
+
+<button class="remove">
+Remove
+</button>
+`;
+
+box.querySelector("input").value=value;
+
+box.querySelector("button").onclick=function(){
+box.remove();
+};
+
+document.getElementById("videos").appendChild(box);
+
+}
+
+document.getElementById("addVideo").onclick=function(){
+addVideo("");
+};
+
+
+/* MEMORY */
+
+function addMemory(text="",date=""){
+
+const box=document.createElement("div");
+
+box.className="item";
+
+box.innerHTML=`
+<input class="memoryDate"
+placeholder="Date">
+
+<textarea class="memoryText"
+placeholder="Memory"></textarea>
+
+<button class="remove">
+Remove
+</button>
+`;
+
+box.querySelector(".memoryDate").value=date;
+box.querySelector(".memoryText").value=text;
+
+box.querySelector("button").onclick=function(){
+box.remove();
+};
+
+document.getElementById("memories").appendChild(box);
+
+}
+
+document.getElementById("addMemory").onclick=function(){
+addMemory("","");
+};
+
+
+/* SAVE */
+
+document.getElementById("saveBtn").onclick=async function(){
+
+const status=
+document.getElementById("status");
+
+status.textContent="Saving...";
+
+
+const photos=
+[...document.querySelectorAll(".photoInput")]
+.map(x=>x.value.trim())
+.filter(Boolean);
+
+
+const videos=
+[...document.querySelectorAll(".videoInput")]
+.map(x=>x.value.trim())
+.filter(Boolean);
+
+
+const memories=
+[...document.querySelectorAll("#memories .item")]
+.map(function(box){
+
+return {
+date:box.querySelector(".memoryDate").value.trim(),
+text:box.querySelector(".memoryText").value.trim()
+};
+
+})
+.filter(x=>x.text || x.date);
+
+
+const updateData={
+
+Name:
+document.getElementById("name").value.trim(),
+
+Event_date:
+document.getElementById("event_date").value.trim(),
+
+Story:
+document.getElementById("story").value.trim(),
+
+Music:
+document.getElementById("music").value.trim(),
+
+Photos:photos,
+
+Videos:videos,
+
+Memories:memories
+
+};
+
+
+try{
+
+const response=
+await fetch(
+SUPABASE_URL+
+"/rest/v1/rana_mazen?Id=eq."+
+encodeURIComponent(rowId),
+{
+method:"PATCH",
+headers:{
+"apikey":SUPABASE_KEY,
+"Content-Type":"application/json",
+"Prefer":"return=minimal"
+},
+body:JSON.stringify(updateData)
+}
+);
+
+if(!response.ok){
+
+const error=
+await response.text();
+
+throw new Error(error);
+
+}
+
+status.textContent=
+"Saved online successfully ♡";
+
+}catch(error){
+
+console.error(error);
+
+status.textContent=
+"Save failed: "+error.message;
+
+}
+
+};
+
+
+/* LOGOUT */
+
+document.getElementById("logoutBtn").onclick=async function(){
+
+await db.auth.signOut();
+
+document.getElementById("admin").style.display="none";
+document.getElementById("login").style.display="block";
+
+};
+
+
+/* EXISTING SESSION */
+
+(async function(){
+
+const {data}=
+await db.auth.getSession();
+
+if(data.session){
+
+document.getElementById("login").style.display="none";
+document.getElementById("admin").style.display="block";
+
+await loadData();
+
+}
+
+})();
+
+</script>
+
+</body>
+</html>

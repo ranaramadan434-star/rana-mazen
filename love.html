@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+<title>Rana & Mazen ♡</title>
+<style>
+*{
+box-sizing:border-box
+}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#fff7f5,#f5e3e0);
+color:#5b4039;
+overflow-x:hidden;
+}
+#hearts,#flowers{
+position:fixed;
+inset:0;
+pointer-events:none;
+overflow:hidden;
+}
+#hearts{
+z-index:0
+}
+#flowers{
+z-index:20
+}
+.heart{
+position:absolute;
+bottom:-40px;
+animation:up 7s linear forwards;
+opacity:.55;
+}
+@keyframes up{
+to{
+transform:translateY(-110vh) rotate(25deg);
+opacity:0;
+}
+}
+.flower{
+position:absolute;
+top:-50px;
+font-size:30px;
+animation:fall 3s linear forwards;
+}
+@keyframes fall{
+to{
+transform:translateY(110vh) rotate(360deg);
+opacity:0;
+}
+}
+main{
+position:relative;
+z-index:2;
+max-width:650px;
+margin:auto;
+padding:30px 15px 70px;
+}
+.hero{
+min-height:70vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+}
+.hero h1{
+font-family:Georgia,serif;
+font-size:52px;
+font-weight:normal;
+margin:10px 0;
+}
+.hero .big-heart{
+font-size:65px;
+animation:beat 1.5s infinite;
+}
+@keyframes beat{
+50%{
+transform:scale(1.15)
+}
+}
+.hero p{
+color:#96756d
+}
+.section{
+margin-top:55px
+}
+h2{
+text-align:center;
+font-family:Georgia,serif;
+font-weight:normal;
+font-size:30px;
+}
+.card{
+background:#ffffffdd;
+border-radius:28px;
+padding:25px;
+box-shadow:0 15px 40px #00000012;
+}
+.hidden{
+display:none!important
+}
+.photos{
+overflow:hidden
+}
+.photo-track{
+display:flex;
+transition:.4s;
+}
+.photo{
+min-width:100%;
+padding:10px;
+}
+.photo img{
+width:100%;
+aspect-ratio:4/5;
+object-fit:cover;
+border-radius:10px;
+display:block;
+box-shadow:0 10px 25px #0002;
+}
+.photo-count{
+text-align:center;
+margin-top:10px;
+}
+.dots{
+display:flex;
+justify-content:center;
+gap:6px;
+margin-top:10px;
+}
+.dot{
+width:8px;
+height:8px;
+border-radius:50%;
+background:#d9c0ba;
+}
+.dot.active{
+width:22px;
+border-radius:20px;
+background:#76554d;
+}
+.lock{
+text-align:center;
+cursor:pointer;
+}
+.lock-circle{
+width:80px;
+height:80px;
+margin:auto;
+border-radius:50%;
+background:#f1dfdb;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:35px;
+}
+.lock h3{
+font-family:Georgia,serif;
+font-size:25px;
+}
+.message{
+line-height:2;
+font-size:16px;
+white-space:pre-line;
+}
+button{
+border:0;
+background:#624740;
+color:white;
+padding:12px 22px;
+border-radius:25px;
+cursor:pointer;
+margin-top:15px;
+}
+.memory-stage{
+height:400px;
+position:relative;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+}
+.memory{
+position:absolute;
+width:88%;
+background:white;
+padding:12px 12px 22px;
+box-shadow:0 15px 40px #0002;
+transition:.4s;
+}
+.memory img{
+width:100%;
+aspect-ratio:4/3;
+object-fit:cover;
+}
+.memory h3{
+font-family:Georgia,serif;
+margin:15px 5px 5px;
+font-size:22px;
+}
+.memory p{
+margin:5px;
+line-height:1.8;
+}
+.memory small{
+margin:5px;
+display:block;
+color:#9c8078;
+}
+.record{
+width:110px;
+height:110px;
+border-radius:50%;
+margin:auto;
+background:repeating-radial-gradient(
+circle,#392622 0 3px,#533b35 4px 7px
+);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+.record:after{
+content:"♡";
+width:32px;
+height:32px;
+background:#ead5d0;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.playing{
+animation:spin 2s linear infinite;
+}
+@keyframes spin{
+to{
+transform:rotate(360deg)
+}
+}
+.music{
+text-align:center
+}
+video{
+width:100%;
+border-radius:18px;
+background:#111;
+}
+input{
+width:100%;
+padding:14px;
+border:1px solid #dcc9c4;
+border-radius:15px;
+text-align:center;
+font-size:16px;
+margin-top:15px;
+}
+.error{
+color:#a04e48;
+margin-top:10px;
+}
+.end{
+text-align:center;
+font-family:Georgia,serif;
+font-size:22px;
+margin-top:70px;
+}
+a{
+color:#76554d;
+font-weight:bold;
+}
+</style>
+</head>
+<body>
+<div id="hearts"></div>
+<div id="flowers"></div>
+<main>
+<section class="hero">
+<div class="big-heart">♡</div>
+<div>OUR LITTLE STORY</div>
+<h1 id="names">
+Rana & Mazen
+</h1>
+<p>
+For my favorite person ❤️
+</p>
+<p id="date"></p>
+<p>
+اسحب لتحت وشوف مفاجأتك ↓
+</p>
+</section>
+<section id="photosSection"
+class="section hidden">
+<h2>
+Our Moments ♡
+</h2>
+<div class="card photos"
+id="photoSlider">
+<div class="photo-track"
+id="photoTrack">
+</div>
+</div>
+<div class="dots"
+id="photoDots">
+</div>
+</section>
+<section class="section">
+<h2>
+A Message For You
+</h2>
+<div id="messageClosed"
+class="card lock"
+onclick="openMessage()">
+<div class="lock-circle">
+🔐
+</div>
+<h3>
+Message
+</h3>
+<p>
+في حاجة مستخبية ليك هنا…<br>
+دوس على القفل عشان تفتح رسالتي ❤️
+</p>
+</div>
+<div id="messageOpen"
+class="card hidden">
+<div id="story"
+class="message">
+</div>
+<div style="text-align:center">
+<button onclick="closeMessage()">
+اقفل الرسالة ♡
+</button>
+</div>
+</div>
+</section>
+<section id="memoriesSection"
+class="section hidden">
+<h2>
+Our Little Moments ♡
+</h2>
+<p style="text-align:center;color:#96756d">
+اسحب الكارت يمين أو شمال واكتشف ذكرياتنا
+</p>
+<div class="memory-stage"
+id="memoryStage">
+</div>
+</section>
+<section id="videoSection"
+class="section hidden">
+<h2>
+Something Secret 🔐
+</h2>
+<div id="videoLocked"
+class="card lock">
+<div class="lock-circle"
+onclick="showDateInput()">
+🔐
+</div>
+<h3>
+Secret Video
+</h3>
+<p>
+الفيديو مقفول…<br>
+التاريخ المميز هو المفتاح ❤️
+</p>
+<div id="dateBox"
+class="hidden">
+<input
+id="secretDate"
+placeholder="DD/MM/YYYY"
+inputmode="numeric">
+<button onclick="unlockVideo()">
+Unlock ♡
+</button>
+<div id="error"
+class="error">
+</div>
+</div>
+</div>
+<div id="videoUnlocked"
+class="hidden">
+</div>
+</section>
+<section id="musicSection"
+class="section hidden">
+<h2>
+Our Sound ♡
+</h2>
+<div class="card music">
+<div id="record"
+class="record"
+onclick="toggleMusic()">
+</div>
+<h3>
+This song sounds like us ♡
+</h3>
+<p>
+كل مرة تسمعها… افتكرنا ❤️
+</p>
+<a id="musicLink"
+class="hidden"
+target="_blank"
+rel="noopener">
+افتح الأغنية ♡
+</a>
+<audio id="audio"></audio>
+</div>
+</section>
+<div class="end">
+And this is only the beginning... ♡
+</div>
+</main>
+<script>
+/* =========================
+   SUPABASE
+========================= */
+const SUPABASE_URL =
+"https://jqpceabdshvboderrbiz.supabase.co";
+const SUPABASE_KEY =
+"sb_publishable_lgtWi40tBxTt1zPogOQ4oA_Zf8SKU2P";
+/* =========================
+   DATA
+========================= */
+let photos = [];
+let photoIndex = 0;
+let memories = [];
+let memoryIndex = 0;
+let videos = [];
+let music = "";
+/* =========================
+   HEARTS
+========================= */
+function heart(){
+const h =
+document.createElement("div");
+h.className = "heart";
+h.textContent =
+Math.random() > 0.5
+? "♡"
+: "♥";
+h.style.left =
+Math.random() * 100 + "%";
+h.style.fontSize =
+(12 + Math.random() * 20) + "px";
+h.style.animationDuration =
+(6 + Math.random() * 5) + "s";
+document
+.getElementById("hearts")
+.appendChild(h);
+setTimeout(
+() => h.remove(),
+12000
+);
+}
+setInterval(heart,800);
+/* =========================
+   FLOWERS
+========================= */
+function flowers(){
+const box =
+document.getElementById("flowers");
+const list = [
+"🌹",
+"🌷",
+"🌸",
+"🌺",
+"💐"
+];
+for(let i = 0; i < 25; i++){
+const f =
+document.createElement("div");
+f.className = "flower";
+f.textContent =
+list[
+Math.floor(
+Math.random() * list.length
+)
+];
+f.style.left =
+Math.random() * 100 + "%";
+f.style.animationDelay =
+Math.random() * 2 + "s";
+box.appendChild(f);
+}
+setTimeout(
+() => box.innerHTML = "",
+5000
+);
+}
+flowers();
+/* =========================
+   MESSAGE
+========================= */
+function openMessage(){
+document
+.getElementById("messageClosed")
+.classList.add("hidden");
+document
+.getElementById("messageOpen")
+.classList.remove("hidden");
+}
+function closeMessage(){
+document
+.getElementById("messageOpen")
+.classList.add("hidden");
+document
+.getElementById("messageClosed")
+.classList.remove("hidden");
+}
+/* =========================
+   PHOTOS
+========================= */
+function showPhotos(){
+if(!photos.length)
+return;
+const track =
+document.getElementById("photoTrack");
+const dots =
+document.getElementById("photoDots");
+track.innerHTML = "";
+dots.innerHTML = "";
+photos.forEach(
+(url,i) => {
+track.innerHTML += `
+<div class="photo">
+<img
+src="${url}"
+alt="Our moment"
+loading="lazy">
+<div class="photo-count">
+${i + 1} / ${photos.length}
+</div>
+</div>
+`;
+dots.innerHTML += `
+<div class="dot ${i === 0 ? "active" : ""}">
+</div>
+`;
+}
+);
+document
+.getElementById("photosSection")
+.classList.remove("hidden");
+updatePhotos();
+}
+function updatePhotos(){
+document
+.getElementById("photoTrack")
+.style.transform =
+`translateX(${photoIndex * 100}%)`;
+document
+.querySelectorAll(".dot")
+.forEach(
+(dot,i) => {
+dot.classList.toggle(
+"active",
+i === photoIndex
+);
+}
+);
+}
+let photoStart = 0;
+document
+.getElementById("photoSlider")
+.addEventListener(
+"touchstart",
+e => {
+photoStart =
+e.touches[0].clientX;
+},
+{passive:true}
+);
+document
+.getElementById("photoSlider")
+.addEventListener(
+"touchend",
+e => {
+const end =
+e.changedTouches[0].clientX;
+if(end - photoStart < -40){
+photoIndex =
+Math.min(
+photoIndex + 1,
+photos.length - 1
+);
+updatePhotos();
+}
+if(end - photoStart > 40){
+photoIndex =
+Math.max(
+photoIndex - 1,
+0
+);
+updatePhotos();
+}
+},
+{passive:true}
+);
+/* =========================
+   MEMORIES
+========================= */
+function showMemories(){
+if(!memories.length)
+return;
+document
+.getElementById("memoriesSection")
+.classList.remove("hidden");
+drawMemories();
+}
+function drawMemories(){
+const stage =
+document.getElementById("memoryStage");
+stage.innerHTML = "";
+memories.forEach(
+(m,i) => {
+if(i < memoryIndex)
+return;
+if(i > memoryIndex + 3)
+return;
+const card =
+document.createElement("div");
+card.className =
+"memory";
+let html = "";
+if(m.image){
+html += `
+<img
+src="${m.image}"
+alt="Memory"
+loading="lazy">
+`;
+}
+if(m.title){
+html += `
+<h3>
+${m.title}
+</h3>
+`;
+}
+if(m.date){
+html += `
+<small>
+${m.date}
+</small>
+`;
+}
+if(m.text){
+html += `
+<p>
+${m.text}
+</p>
+`;
+}
+card.innerHTML = html;
+const offset =
+i - memoryIndex;
+card.style.zIndex =
+10 - offset;
+card.style.transform =
+`
+translateY(${offset * 8}px)
+rotate(${offset % 2 ? 2 : -2}deg)
+scale(${1 - offset * .04})
+`;
+stage.appendChild(card);
+}
+);
+}
+let memoryStart = 0;
+document
+.getElementById("memoryStage")
+.addEventListener(
+"touchstart",
+e => {
+memoryStart =
+e.touches[0].clientX;
+},
+{passive:true}
+);
+document
+.getElementById("memoryStage")
+.addEventListener(
+"touchend",
+e => {
+if(!memories.length)
+return;
+const end =
+e.changedTouches[0].clientX;
+if(end - memoryStart < -40){
+memoryIndex++;
+if(memoryIndex >= memories.length)
+memoryIndex = 0;
+drawMemories();
+}
+if(end - memoryStart > 40){
+memoryIndex--;
+if(memoryIndex < 0)
+memoryIndex =
+memories.length - 1;
+drawMemories();
+}
+},
+{passive:true}
+);
+/* =========================
+   VIDEO
+========================= */
+function showDateInput(){
+document
+.getElementById("dateBox")
+.classList.remove("hidden");
+}
+function unlockVideo(){
+const value =
+document
+.getElementById("secretDate")
+.value
+.replace(/[^0-9]/g,"");
+if(
+value !== "03112025" &&
+value !== "3112025"
+){
+document
+.getElementById("error")
+.textContent =
+"التاريخ مش ده 👀 جربي تاني ❤️";
+return;
+}
+if(!videos.length){
+document
+.getElementById("error")
+.textContent =
+"الفيديو لسه مش مضاف ❤️";
+return;
+}
+document
+.getElementById("videoLocked")
+.classList.add("hidden");
+const box =
+document.getElementById("videoUnlocked");
+box.innerHTML = "";
+box.classList.remove("hidden");
+videos.forEach(
+url => {
+box.innerHTML += `
+<div
+class="card"
+style="margin-top:15px">
+<video
+controls
+playsinline
+preload="metadata">
+<source
+src="${url}"
+type="video/mp4">
+المتصفح لا يدعم تشغيل الفيديو.
+</video>
+</div>
+`;
+}
+);
+}
+/* =========================
+   MUSIC
+========================= */
+function setupMusic(url){
+if(!url)
+return;
+music = url;
+document
+.getElementById("musicSection")
+.classList.remove("hidden");
+document
+.getElementById("audio")
+.src = url;
+document
+.getElementById("musicLink")
+.href = url;
+}
+async function toggleMusic(){
+if(!music)
+return;
+const audio =
+document.getElementById("audio");
+const record =
+document.getElementById("record");
+try{
+if(audio.paused){
+await audio.play();
+record.classList.add("playing");
+}else{
+audio.pause();
+record.classList.remove("playing");
+}
+}catch(e){
+document
+.getElementById("musicLink")
+.classList.remove("hidden");
+}
+}
+document
+.getElementById("audio")
+.addEventListener(
+"ended",
+() => {
+document
+.getElementById("record")
+.classList.remove("playing");
+}
+);
+/* =========================
+   SAFE JSON
+========================= */
+function parseJSON(value){
+if(Array.isArray(value))
+return value;
+if(typeof value !== "string")
+return [];
+try{
+const parsed =
+JSON.parse(value);
+return Array.isArray(parsed)
+? parsed
+: [];
+}catch(e){
+return [];
+}
+}
+/* =========================
+   LOAD SUPABASE
+========================= */
+async function load(){
+try{
+const response =
+await fetch(
+SUPABASE_URL +
+"/rest/v1/rana_mazen?select=*",
+{
+method:"GET",
+headers:{
+"apikey":
+SUPABASE_KEY,
+"Authorization":
+"Bearer " + SUPABASE_KEY,
+"Accept":
+"application/json"
+}
+}
+);
+const data =
+await response.json();
+console.log(
+"SUPABASE RESPONSE:",
+data
+);
+if(!response.ok){
+console.error(
+"SUPABASE ERROR:",
+data
+);
+return;
+}
+if(
+!Array.isArray(data) ||
+!data.length
+){
+console.error(
+"SUPABASE: NO DATA"
+);
+return;
+}
+const row =
+data[0];
+/* NAME */
+if(row.Name){
+document
+.getElementById("names")
+.textContent =
+row.Name;
+}
+/* DATE */
+if(row.Event_date){
+document
+.getElementById("date")
+.textContent =
+row.Event_date;
+}
+/* STORY */
+if(row.Story){
+document
+.getElementById("story")
+.textContent =
+row.Story;
+}
+/* PHOTOS */
+photos =
+parseJSON(row.Photos);
+if(photos.length){
+showPhotos();
+}
+/* MEMORIES */
+memories =
+parseJSON(row.Memories);
+if(memories.length){
+showMemories();
+}
+/* VIDEOS */
+videos =
+parseJSON(row.Videos);
+if(videos.length){
+document
+.getElementById("videoSection")
+.classList.remove("hidden");
+}
+/* MUSIC */
+if(row.Music){
+setupMusic(
+row.Music
+);
+}
+console.log(
+"RANA & MAZEN DATA LOADED ❤️"
+);
+}catch(error){
+console.error(
+"LOAD ERROR:",
+error
+);
+}
+}
+load();
+</script>
+</body>
+</html>
